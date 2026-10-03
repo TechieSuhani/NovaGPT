@@ -4,7 +4,7 @@ import { rateLimit } from "express-rate-limit";
 import { randomUUID } from "node:crypto";
 import Thread from "../models/Thread.js";
 import User from "../models/User.js";
-import getGeminiResponse from "../utils/gemini.js";
+import getAIResponse from "../utils/ai.js";
 import {
     clearSessionCookie,
     createSessionToken,
@@ -252,7 +252,7 @@ router.post("/chat", async (req, res) => {
             })),
             { role: "user", content: message.trim() }
         ];
-        const reply = await getGeminiResponse(messages, {
+        const reply = await getAIResponse(messages, {
             responseStyle,
             responseLanguage
         });

@@ -1,11 +1,11 @@
 # NovaGPT
 
-A responsive AI chat app powered by the Gemini API.
+A responsive AI chat app powered by Groq, with Gemini available as an optional provider.
 
 ## Run locally
 
 1. Copy `Backend/.env.example` to `Backend/.env`.
-2. Add your Gemini API key as `GEMINI_API_KEY` and a random `AUTH_SECRET` (at least 32 characters) to `Backend/.env`. Keep both values private.
+2. Add your Groq API key as `GROQ_API_KEY` and a random `AUTH_SECRET` (at least 32 characters) to `Backend/.env`. Keep both values private. `AI_PROVIDER` defaults to `groq`; `GROQ_MODEL` defaults to `openai/gpt-oss-20b`.
 3. Start the backend in one terminal:
 
    ```powershell
@@ -34,11 +34,11 @@ This repository includes a `render.yaml` Blueprint for a single Render web servi
 
 1. Push this repository to GitHub.
 2. In Render, create a new **Blueprint** and select this repository.
-3. Set the `GEMINI_API_KEY` environment variable in the Render service settings. Never put the key in GitHub or in frontend code.
+3. Set `GROQ_API_KEY` in the Render service settings. The Blueprint selects Groq with `AI_PROVIDER=groq`; never put the key in GitHub or frontend code.
 4. Set `MONGODB_URI` to an Atlas connection string and allow the Render service's outbound IP ranges in Atlas Network Access. MongoDB is required for user accounts and persistent chat history.
 5. The Blueprint generates `AUTH_SECRET` automatically. If configuring the service without the Blueprint, set a random secret of at least 32 characters in Render.
 6. Deploy the service and open its `onrender.com` URL.
 
-Render's free instance may spin down after inactivity. Gemini API availability, quotas, and terms depend on Google's current free-tier policy.
+Render's free instance may spin down after inactivity. Groq rate limits depend on the model and organization; check the current limits at [Groq Console](https://console.groq.com/settings/limits). A free API tier is not unlimited, and availability and terms can change.
 
-If Gemini's free request quota is exhausted, NovaGPT shows a short retry/billing message instead of the provider's raw error. Wait until Google's quota reset or enable a Gemini plan with available quota; restarting or redeploying the app does not reset the API quota.
+To use Gemini instead, set `AI_PROVIDER=gemini` and provide `GEMINI_API_KEY`. If the selected provider's quota or rate limit is exhausted, NovaGPT displays a concise retry message; restarting or redeploying the app does not reset provider limits.
