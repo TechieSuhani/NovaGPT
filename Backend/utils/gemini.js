@@ -75,12 +75,19 @@ const getGeminiResponse = async (messages, preferences = {}) => {
         const data = await response.json();
 
         if (!response.ok) {
+            const providerMessage = data?.error?.message || "Gemini API request failed.";
+            const isQuotaExceeded = response.status === 429 &&
+                /(quota exceeded|free_tier_requests|generate_content_free_tier_requests)/i
+                    .test(providerMessage);
             const error = new Error(
-                data?.error?.message || "Gemini API request failed."
+                isQuotaExceeded
+                    ? "NovaGPT has reached Gemini's free request limit. Please try again after Google's quota reset, or enable billing for more requests."
+                    : providerMessage
             );
             error.statusCode = response.status;
 
-            if (!RETRYABLE_STATUSES.has(response.status) || attempt === MAX_ATTEMPTS) {
+            if (isQuotaExceeded || !RETRYABLE_STATUSES.has(response.status) ||
+                attempt === MAX_ATTEMPTS) {
                 throw error;
             }
 

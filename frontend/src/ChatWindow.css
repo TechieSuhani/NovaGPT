@@ -271,6 +271,7 @@ input:focus {
 }
 
 .responseStatus {
+    width: 100%;
     min-height: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -279,9 +280,15 @@ input:focus {
 }
 
 .errorMessage {
+    width: fit-content;
+    max-width: min(calc(100% - 2rem), 820px);
     color: #fca5a5;
     font-size: 0.9rem;
-    margin: 0.4rem 1rem;
+    line-height: 1.5;
+    margin: 0.4rem auto;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.75rem;
+    overflow-wrap: anywhere;
     text-align: center;
 }
 

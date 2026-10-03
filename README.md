@@ -40,3 +40,5 @@ This repository includes a `render.yaml` Blueprint for a single Render web servi
 6. Deploy the service and open its `onrender.com` URL.
 
 Render's free instance may spin down after inactivity. Gemini API availability, quotas, and terms depend on Google's current free-tier policy.
+
+If Gemini's free request quota is exhausted, NovaGPT shows a short retry/billing message instead of the provider's raw error. Wait until Google's quota reset or enable a Gemini plan with available quota; restarting or redeploying the app does not reset the API quota.
