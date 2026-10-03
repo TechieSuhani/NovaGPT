@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: novagpt
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --prefix frontend && npm run build --prefix frontend && npm ci --prefix Backend
+    startCommand: npm start --prefix Backend
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
