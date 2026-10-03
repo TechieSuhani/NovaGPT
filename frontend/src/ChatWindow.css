@@ -708,6 +708,14 @@ input:focus {
 }
 
 @media (max-width: 700px) {
+    .modelDropdown {
+        position: fixed;
+        top: calc(64px + 0.45rem);
+        right: max(0.75rem, env(safe-area-inset-right));
+        left: max(0.75rem, env(safe-area-inset-left));
+        width: auto;
+    }
+
     .navbar > .modelArea {
         margin-left: 0.5rem;
         margin-right: auto;
