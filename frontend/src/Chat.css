@@ -45,6 +45,31 @@
     margin: 1.25rem 0;
 }
 
+.assistantMessage {
+    position: relative;
+}
+
+.speakReplyButton {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.35rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.speakReplyButton:hover {
+    border-color: #444;
+    background: #303030;
+    color: #fff;
+}
+
 .userMessage {
     background: linear-gradient(145deg, #343434, #2b2b2b);
     padding: 0.8rem 1.05rem;

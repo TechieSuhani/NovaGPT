@@ -26,6 +26,8 @@ Open the Vite URL printed in the frontend terminal. Signed-in users' chat histor
 
 Settings let you choose dark or light appearance, response detail, and reply language; these preferences are stored in the current browser. The account menu offers email/password registration and login; passwords are stored as scrypt hashes and sign-in uses an HttpOnly session cookie. Saved conversations are scoped to the signed-in account. INR plan prices are previews only—payments are not enabled.
 
+The chat composer supports microphone dictation in browsers that provide the Web Speech API. Assistant replies can be read aloud using the speaker button; browser microphone permissions and installed speech voices are required.
+
 ## Deploy on Render
 
 This repository includes a `render.yaml` Blueprint for a single Render web service that builds the Vite frontend and serves it with the Express API.

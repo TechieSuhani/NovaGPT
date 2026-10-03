@@ -22,8 +22,10 @@ function ChatWindow() {
     const [password, setPassword] = useState("");
     const [authLoading, setAuthLoading] = useState(false);
     const [authError, setAuthError] = useState("");
+    const [isListening, setIsListening] = useState(false);
     const profileAreaRef = useRef(null);
     const modelAreaRef = useRef(null);
+    const recognitionRef = useRef(null);
 
     useEffect(() => {
         const closeMenuOnOutsideClick = (event) => {
@@ -49,6 +51,65 @@ function ChatWindow() {
             document.removeEventListener("keydown", closeOnEscape);
         };
     }, [activePanel]);
+
+    useEffect(() => () => {
+        recognitionRef.current?.abort();
+    }, []);
+
+    const toggleVoiceInput = () => {
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+            return;
+        }
+
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            setError("Voice input is not supported in this browser. Try Chrome.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = navigator.language || "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognitionRef.current = recognition;
+        setError("");
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0]?.[0]?.transcript?.trim();
+            if (transcript) {
+                setPrompt((currentPrompt) =>
+                    `${currentPrompt}${currentPrompt && !/\s$/.test(currentPrompt) ? " " : ""}${transcript}`
+                );
+            }
+        };
+        recognition.onerror = (event) => {
+            const messages = {
+                "not-allowed": "Allow microphone access in your browser to use voice input.",
+                "service-not-allowed": "Voice input is blocked by the browser.",
+                "no-speech": "No speech was detected. Please try again.",
+                "audio-capture": "No microphone was found on this device.",
+                network: "Voice input needs an internet connection. Please try again."
+            };
+            setError(messages[event.error] || "Voice input failed. Please try again.");
+        };
+        recognition.onend = () => {
+            recognitionRef.current = null;
+            setIsListening(false);
+        };
+
+        try {
+            recognition.start();
+            setIsListening(true);
+        } catch {
+            recognitionRef.current = null;
+            setIsListening(false);
+            setError("Could not start voice input. Please try again.");
+        }
+    };
 
     const getReply = async (event) => {
         event?.preventDefault();
@@ -228,6 +289,17 @@ function ChatWindow() {
                     >
                            
                     </input>
+                    <button
+                        className={`voiceButton${isListening ? " voiceButtonListening" : ""}`}
+                        type="button"
+                        aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                        aria-pressed={isListening}
+                        title={isListening ? "Stop listening" : "Speak your prompt"}
+                        onClick={toggleVoiceInput}
+                        disabled={loading}
+                    >
+                        <i className={`fa-solid ${isListening ? "fa-stop" : "fa-microphone"}`}></i>
+                    </button>
                     <button id="submit" type="submit" aria-label="Send message" disabled={loading || !prompt.trim()}>
                         <i className="fa-solid fa-paper-plane"></i>
                     </button>

@@ -214,6 +214,45 @@ input:focus {
     background-color: #676767;
 }
 
+.voiceButton {
+    position: absolute;
+    right: 3.35rem;
+    display: flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #c7c7c7;
+    cursor: pointer;
+}
+
+.voiceButton:hover,
+.voiceButtonListening {
+    background: #383838;
+    color: #fff;
+}
+
+.voiceButtonListening {
+    animation: voicePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+    50% {
+        box-shadow: 0 0 0 6px rgba(248, 113, 113, 0.18);
+        color: #fca5a5;
+    }
+}
+
+.voiceButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 #submit:disabled {
     cursor: not-allowed;
     opacity: 0.5;
@@ -681,6 +720,16 @@ input:focus {
 .app.theme-light .userMessage,
 .app.theme-light .planCard,
 .app.theme-light .planCard * {
+    color: #202124;
+}
+
+.app.theme-light .voiceButton {
+    color: #50545a;
+}
+
+.app.theme-light .voiceButton:hover,
+.app.theme-light .voiceButtonListening {
+    background: #e4e6ea;
     color: #202124;
 }
 
