@@ -18,7 +18,7 @@ const getRetryDelay = (response, attempt) => {
     return attempt * 1000;
 };
 
-const getGeminiResponse = async (messages) => {
+const getGeminiResponse = async (messages, preferences = {}) => {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -26,6 +26,21 @@ const getGeminiResponse = async (messages) => {
         error.statusCode = 503;
         throw error;
     }
+
+    const responseStyles = {
+        concise: "Keep answers concise and focused.",
+        balanced: "Give clear, balanced answers with useful detail.",
+        detailed: "Give thorough answers with explanations and examples when useful."
+    };
+    const responseLanguages = {
+        english: "Reply in English.",
+        hindi: "Reply in Hindi."
+    };
+    const instructions = [
+        responseStyles[preferences.responseStyle] || responseStyles.balanced,
+        responseLanguages[preferences.responseLanguage] ||
+            "Reply in the same language as the user's latest message."
+    ];
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
         let response;
@@ -38,6 +53,9 @@ const getGeminiResponse = async (messages) => {
                     "x-goog-api-key": apiKey
                 },
                 body: JSON.stringify({
+                    systemInstruction: {
+                        parts: [{ text: instructions.join(" ") }]
+                    },
                     contents: messages.map(({ role, content }) => ({
                         role: role === "assistant" ? "model" : "user",
                         parts: [{ text: content }]

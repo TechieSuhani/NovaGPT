@@ -24,7 +24,14 @@
 }
 
 .userIconDiv {
+    width: 36px;
+    height: 36px;
+    justify-content: center;
     margin: 1rem 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
 }
 
 .userIcon {
@@ -131,7 +138,7 @@ input:focus {
     position: absolute;
     top: 4rem;
     right: 4rem;
-    width: 150px;
+    width: 190px;
 
     background-color: #323232;
     padding: 0.3rem 0.5rem;
@@ -142,16 +149,319 @@ input:focus {
 }
 
 .dropDownItem {
+    display: flex;
+    width: 100%;
     font-size: 0.9rem;
-    margin: 0.3rem 0rem;
-    padding: 0.5rem 0.2rem;
+    margin: 0.15rem 0;
+    padding: 0.65rem 0.5rem;
+    gap: 0.65rem;
+    justify-content: flex-start;
+    border: 0;
     cursor: pointer;
 }
-
 
 .dropDownItem:hover {
     background-color: rgba(180, 180, 180, 0.1);
     border-radius: 6px;
+}
+
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.68);
+    backdrop-filter: blur(6px);
+}
+
+.accountModal {
+    width: min(100%, 560px);
+    max-height: min(88dvh, 760px);
+    overflow-y: auto;
+    padding: 1.5rem;
+    border: 1px solid #414141;
+    border-radius: 1.25rem;
+    background: #202020;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    text-align: left;
+}
+
+.modalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modalHeader h2,
+.loginModal h2 {
+    margin: 0;
+    font-size: 1.55rem;
+}
+
+.modalEyebrow {
+    margin: 0 0 0.4rem;
+    color: #a3a3a3;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.modalClose {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #303030;
+    font-size: 1.15rem;
+}
+
+.settingRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid #393939;
+}
+
+.settingRow span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.settingRow strong {
+    font-size: 0.95rem;
+}
+
+.settingRow small,
+.modalFootnote {
+    color: #aaa;
+    font-size: 0.78rem;
+}
+
+.settingRow select {
+    width: min(45%, 180px);
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #505050;
+    border-radius: 0.65rem;
+    background: #2b2b2b;
+    color: #f2f2f2;
+    font: inherit;
+}
+
+.modalFootnote {
+    margin: 1rem 0 0;
+    line-height: 1.5;
+}
+
+.pricingModal {
+    width: min(100%, 900px);
+}
+
+.pricingIntro {
+    margin: -0.35rem 0 1.25rem;
+    color: #bdbdbd;
+    font-size: 0.9rem;
+}
+
+.planGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.planCard {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid #3d3d3d;
+    border-radius: 0.9rem;
+    background: #252525;
+}
+
+.planCard.selectedPlan {
+    border-color: #8b8bff;
+    box-shadow: inset 0 0 0 1px #8b8bff;
+}
+
+.planCard h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.planPrice {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.planPrice span {
+    color: #aaa;
+    font-size: 0.72rem;
+    font-weight: 400;
+}
+
+.planDescription {
+    min-height: 2.4em;
+    margin: 0;
+    color: #bdbdbd;
+    font-size: 0.78rem;
+}
+
+.planCard ul {
+    min-height: 4rem;
+    padding-left: 1.1rem;
+    color: #ddd;
+    font-size: 0.78rem;
+    line-height: 1.65;
+}
+
+.planButton,
+.primaryModalButton {
+    width: 100%;
+    justify-content: center;
+    margin: auto 0 0;
+    padding: 0.7rem;
+    border: 1px solid #5b5b5b;
+    border-radius: 0.7rem;
+    background: #343434;
+    font-size: 0.85rem;
+}
+
+.planButton:hover,
+.primaryModalButton:hover {
+    background: #444;
+}
+
+.planNotice {
+    margin: 0.8rem 0 0;
+    color: #a7f3d0;
+    font-size: 0.82rem;
+}
+
+.loginModal {
+    width: min(100%, 420px);
+    padding: 2rem;
+    text-align: center;
+}
+
+.loginLogo {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    place-items: center;
+    border-radius: 16px;
+    background: #303040;
+    color: #c5c5ff;
+    font-size: 1.4rem;
+}
+
+.loginModal > p:not(.modalEyebrow) {
+    margin: 0.8rem 0 1.25rem;
+    color: #bdbdbd;
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.primaryModalButton {
+    min-height: 44px;
+    border: 0;
+    background: #f4f4f4;
+    color: #171717;
+    font-weight: 700;
+}
+
+.primaryModalButton:hover {
+    background: #ddd;
+    color: #171717;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.app.theme-light * {
+    color: #202124;
+}
+
+.app.theme-light .sidebar {
+    background: #f0f1f3;
+    color: #30343a;
+}
+
+.app.theme-light .sidebar button,
+.app.theme-light .userIconDiv {
+    border-color: #c8cbd0;
+    background-color: transparent;
+}
+
+.app.theme-light .chatWindow,
+.app.theme-light .app {
+    background: #fff;
+}
+
+.app.theme-light .inputBox input {
+    background: #f1f2f4;
+}
+
+.app.theme-light .userMessage,
+.app.theme-light .planCard {
+    background: #eceef1;
+}
+
+.app.theme-light .dropDown,
+.app.theme-light .accountModal {
+    border-color: #d6d8dc;
+    background: #fff;
+}
+
+.app.theme-light .dropDownItem:hover,
+.app.theme-light .modalClose,
+.app.theme-light .planButton {
+    background: #eceef1;
+}
+
+.app.theme-light .settingRow,
+.app.theme-light .planCard {
+    border-color: #d6d8dc;
+}
+
+.app.theme-light .settingRow select {
+    border-color: #c8cbd0;
+    background: #f5f6f7;
+}
+
+.app.theme-light .userIcon,
+.app.theme-light .userIcon i,
+.app.theme-light .errorMessage {
+    color: #fff;
+}
+
+.app.theme-light .errorMessage {
+    color: #b42318;
+}
+
+.app.theme-light .userMessage,
+.app.theme-light .planCard,
+.app.theme-light .planCard * {
+    color: #202124;
 }
 
 @media (max-width: 700px) {
@@ -162,5 +472,22 @@ input:focus {
 
     .chatInput {
         padding: 0 0.75rem;
+    }
+
+    .modalBackdrop {
+        padding: 0.75rem;
+    }
+
+    .accountModal {
+        padding: 1.15rem;
+    }
+
+    .planGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .planDescription,
+    .planCard ul {
+        min-height: 0;
     }
 }

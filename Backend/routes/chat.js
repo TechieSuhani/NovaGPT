@@ -69,7 +69,7 @@ router.delete("/thread/:threadId", async (req, res) => {
 });
 
 router.post("/chat", async (req, res) => {
-    const { threadId, message } = req.body;
+    const { threadId, message, responseStyle, responseLanguage } = req.body;
 
     if (typeof threadId !== "string" || !threadId.trim() ||
         typeof message !== "string" || !message.trim()) {
@@ -89,7 +89,10 @@ router.post("/chat", async (req, res) => {
             })),
             { role: "user", content: message.trim() }
         ];
-        const reply = await getGeminiResponse(messages);
+        const reply = await getGeminiResponse(messages, {
+            responseStyle,
+            responseLanguage
+        });
         const now = new Date();
         const thread = existingThread || {
             threadId,

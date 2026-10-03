@@ -22,6 +22,10 @@ A responsive AI chat app powered by the Gemini API.
 
 Open the Vite URL printed in the frontend terminal. Chat history is stored in MongoDB when `MONGODB_URI` is configured and connected; otherwise it is kept in backend memory and is cleared when the backend restarts.
 
+## Account menu
+
+Settings let you choose dark or light appearance, response detail, and reply language; these preferences are stored in the current browser. The account menu, logout/continue-as-demo flow, and INR plan prices are UI previews only. NovaGPT does not currently provide real account authentication or payment processing, and selecting a paid plan will not charge you.
+
 ## Deploy on Render
 
 This repository includes a `render.yaml` Blueprint for a single Render web service that builds the Vite frontend and serves it with the Express API.
