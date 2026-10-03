@@ -16,6 +16,7 @@ function App() {
   const [responseStyle, setResponseStyle] = useState(() => localStorage.getItem("novagpt-response-style") || "balanced");
   const [responseLanguage, setResponseLanguage] = useState(() => localStorage.getItem("novagpt-response-language") || "auto");
   const [plan, setPlan] = useState(() => localStorage.getItem("novagpt-plan") || "Free");
+  const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("novagpt-theme", theme);
@@ -33,6 +34,25 @@ function App() {
     localStorage.setItem("novagpt-plan", plan);
   }, [plan]);
 
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/auth/me")
+      .then(async (response) => {
+        if (response.status === 401) return;
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "Could not restore your sign-in.");
+        }
+        if (active) setAuthUser(data.user);
+      })
+      .catch((error) => console.error("Could not restore sign-in:", error));
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const providerValues = {
     prompt, setPrompt,
     reply, setReply,
@@ -43,7 +63,8 @@ function App() {
     theme, setTheme,
     responseStyle, setResponseStyle,
     responseLanguage, setResponseLanguage,
-    plan, setPlan
+    plan, setPlan,
+    authUser, setAuthUser
   }; 
 
   return (

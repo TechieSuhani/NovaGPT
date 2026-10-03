@@ -1,21 +1,54 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {ScaleLoader} from "react-spinners";
 
 function ChatWindow() {
     const {
         prompt, setPrompt, setReply, currThreadId, setPrevChats, setNewChat,
         setAllThreads, theme, setTheme, responseStyle, setResponseStyle,
-        responseLanguage, setResponseLanguage, plan, setPlan
+        responseLanguage, setResponseLanguage, plan, setPlan, authUser, setAuthUser
     } = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
     const [error, setError] = useState("");
     const [activePanel, setActivePanel] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [planNotice, setPlanNotice] = useState("");
+    const [requestedPlan, setRequestedPlan] = useState("");
+    const [authMode, setAuthMode] = useState("login");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [authLoading, setAuthLoading] = useState(false);
+    const [authError, setAuthError] = useState("");
+    const profileAreaRef = useRef(null);
+    const modelAreaRef = useRef(null);
+
+    useEffect(() => {
+        const closeMenuOnOutsideClick = (event) => {
+            if (!profileAreaRef.current?.contains(event.target)) {
+                setIsOpen(false);
+            }
+            if (!modelAreaRef.current?.contains(event.target)) {
+                setIsModelMenuOpen(false);
+            }
+        };
+        const closeOnEscape = (event) => {
+            if (event.key === "Escape") {
+                setIsOpen(false);
+                setIsModelMenuOpen(false);
+                if (activePanel !== "auth") setActivePanel("");
+            }
+        };
+
+        document.addEventListener("pointerdown", closeMenuOnOutsideClick);
+        document.addEventListener("keydown", closeOnEscape);
+        return () => {
+            document.removeEventListener("pointerdown", closeMenuOnOutsideClick);
+            document.removeEventListener("keydown", closeOnEscape);
+        };
+    }, [activePanel]);
 
     const getReply = async (event) => {
         event?.preventDefault();
@@ -65,37 +98,119 @@ function ChatWindow() {
         }
     };
 
-    const handleProfileClick = () => {
-        setIsOpen(!isOpen);
-    }
-
     const openPanel = (panel) => {
         setActivePanel(panel);
         setIsOpen(false);
+        setIsModelMenuOpen(false);
         setPlanNotice("");
+        setAuthError("");
+    };
+
+    const openPlanPicker = (selectedPlan = "") => {
+        setRequestedPlan(selectedPlan);
+        openPanel("upgrade");
     };
 
     const closePanel = () => setActivePanel("");
 
+    const submitAuth = async (event) => {
+        event.preventDefault();
+        if (authLoading) return;
+
+        setAuthLoading(true);
+        setAuthError("");
+
+        try {
+            const endpoint = authMode === "register" ? "register" : "login";
+            const response = await fetch(`/api/auth/${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Could not sign in.");
+            }
+
+            setAuthUser(data.user);
+            setPassword("");
+            setActivePanel("");
+        } catch (authRequestError) {
+            setAuthError(authRequestError.message || "Could not connect to the sign-in service.");
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const logOut = async () => {
+        setAuthError("");
+        try {
+            const response = await fetch("/api/auth/logout", { method: "POST" });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Could not log out.");
+            }
+
+            setAuthUser(null);
+            setAuthMode("login");
+            setPassword("");
+            openPanel("auth");
+        } catch (logoutError) {
+            setAuthError(logoutError.message || "Could not connect to the sign-out service.");
+        }
+    };
+
     return (
         <div className="chatWindow">
             <div className="navbar">
-                <span>NovaGPT <i className="fa-solid fa-chevron-down"></i></span>
-                <button className="userIconDiv" type="button" aria-label="Account menu" aria-expanded={isOpen} onClick={handleProfileClick}>
-                    <span className="userIcon"><i className="fa-solid fa-user"></i></span>
-                </button>
-            </div>
-            {
-                isOpen && 
-                <div className="dropDown">
-                    <button className="dropDownItem" type="button" onClick={() => openPanel("settings")}><i className="fa-solid fa-gear"></i> Settings</button>
-                    <button className="dropDownItem" type="button" onClick={() => openPanel("upgrade")}><i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</button>
-                    <button className="dropDownItem" type="button" onClick={() => {
-                        setIsLoggedIn(false);
-                        openPanel("login");
-                    }}><i className="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
+                <div className="modelArea" ref={modelAreaRef}>
+                    <button className="brandButton" type="button" aria-label="Choose NovaGPT version" aria-expanded={isModelMenuOpen} onClick={() => {
+                        setIsModelMenuOpen((open) => !open);
+                        setIsOpen(false);
+                    }}>
+                        <span>NovaGPT</span><i className="fa-solid fa-chevron-down"></i>
+                    </button>
+                    {isModelMenuOpen && (
+                        <div className="modelDropdown">
+                            <p className="modelMenuLabel">CHOOSE A PLAN</p>
+                            <button type="button" className={`modelOption${plan === "Free" ? " activeModel" : ""}`} onClick={() => {
+                                setPlan("Free");
+                                setIsModelMenuOpen(false);
+                            }}>
+                                <span><strong>NovaGPT Basic</strong><small>Everyday AI chat</small></span>
+                                <span className="modelPrice">Free{plan === "Free" && <i className="fa-solid fa-check"></i>}</span>
+                            </button>
+                            <button type="button" className={`modelOption${requestedPlan === "Plus" ? " activeModel" : ""}`} onClick={() => openPlanPicker("Plus")}>
+                                <span><strong>NovaGPT Plus</strong><small>More room to explore</small></span>
+                                <span className="modelPrice">₹399 <small>/ mo</small><i className="fa-solid fa-chevron-right"></i></span>
+                            </button>
+                            <button type="button" className={`modelOption${requestedPlan === "Pro" ? " activeModel" : ""}`} onClick={() => openPlanPicker("Pro")}>
+                                <span><strong>NovaGPT Pro</strong><small>For power users</small></span>
+                                <span className="modelPrice">₹799 <small>/ mo</small><i className="fa-solid fa-chevron-right"></i></span>
+                            </button>
+                        </div>
+                    )}
                 </div>
-            }
+                <div className="profileArea" ref={profileAreaRef}>
+                    <button className="userIconDiv" type="button" aria-label="Account menu" aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)}>
+                        <span className="userIcon"><i className="fa-solid fa-user"></i></span>
+                    </button>
+                    {isOpen && (
+                        <div className="dropDown">
+                            {authUser && <p className="profileEmail">{authUser.email}</p>}
+                            {!authUser && <button className="dropDownItem" type="button" onClick={() => {
+                                setAuthMode("login");
+                                openPanel("auth");
+                            }}><i className="fa-solid fa-user-lock"></i> Log in / Sign up</button>}
+                            <button className="dropDownItem" type="button" onClick={() => openPanel("settings")}><i className="fa-solid fa-gear"></i> Settings</button>
+                            <button className="dropDownItem" type="button" onClick={() => openPanel("upgrade")}><i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</button>
+                            {authUser && <button className="dropDownItem" type="button" onClick={logOut}><i className="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>}
+                        </div>
+                    )}
+                </div>
+            </div>
             <Chat></Chat>
 
             <div className="responseStatus" aria-live="polite">
@@ -123,7 +238,7 @@ function ChatWindow() {
             </form>
             {activePanel && (
                 <div className="modalBackdrop" onMouseDown={(event) => {
-                    if (event.target === event.currentTarget && activePanel !== "login") closePanel();
+                    if (event.target === event.currentTarget && activePanel !== "auth") closePanel();
                 }}>
                     {activePanel === "settings" && (
                         <section className="accountModal settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
@@ -176,7 +291,7 @@ function ChatWindow() {
                                     { name: "Plus", price: "₹399", description: "For everyday projects", features: ["Everything in Free", "More room to explore"] },
                                     { name: "Pro", price: "₹799", description: "For power users", features: ["Everything in Plus", "Priority experience"] }
                                 ].map((item) => (
-                                    <article className={`planCard${plan === item.name ? " selectedPlan" : ""}`} key={item.name}>
+                                    <article className={`planCard${plan === item.name || requestedPlan === item.name ? " selectedPlan" : ""}`} key={item.name}>
                                         <h3>{item.name}</h3>
                                         <p className="planPrice">{item.price}<span>{item.price === "₹0" ? " / forever" : " / month"}</span></p>
                                         <p className="planDescription">{item.description}</p>
@@ -186,9 +301,9 @@ function ChatWindow() {
                                                 setPlan("Free");
                                                 setPlanNotice("Free plan selected for this demo.");
                                             } else {
-                                                setPlanNotice("Checkout is not connected yet; no payment was made.");
+                                                setPlanNotice(`Checkout for NovaGPT ${item.name} is not connected yet; no payment was made.`);
                                             }
-                                        }}>{plan === item.name ? "Current plan" : item.name === "Free" ? "Choose Free" : "Coming soon"}</button>
+                                        }}>{item.name === "Free" && plan === "Free" ? "Current plan" : item.name === "Free" ? "Choose Free" : `Buy ${item.name}`}</button>
                                     </article>
                                 ))}
                             </div>
@@ -196,22 +311,37 @@ function ChatWindow() {
                             <p className="modalFootnote">Sample prices only. Paid plans and checkout are not active.</p>
                         </section>
                     )}
-                    {activePanel === "login" && (
+                    {activePanel === "auth" && (
                         <section className="accountModal loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+                            <button className="modalClose authClose" type="button" aria-label="Close sign in" onClick={closePanel}><i className="fa-solid fa-xmark"></i></button>
                             <div className="loginLogo"><i className="fa-solid fa-comment-dots"></i></div>
-                            <p className="modalEyebrow">NOVAGPT ACCOUNT</p>
-                            <h2 id="loginTitle">You’re signed out</h2>
-                            <p>Sign-in is not connected in this demo yet. Continue as a guest to use NovaGPT.</p>
-                            <button className="primaryModalButton" type="button" onClick={() => {
-                                setIsLoggedIn(true);
-                                closePanel();
-                            }}>Continue with demo</button>
-                            <small className="modalFootnote">This demo does not create or authenticate an account.</small>
+                            <p className="modalEyebrow">YOUR AI WORKSPACE</p>
+                            <h2 id="loginTitle">{authMode === "register" ? "Create your account" : "Welcome back"}</h2>
+                            <p>{authMode === "register" ? "Sign up with your email to get started." : "Log in to continue to NovaGPT."}</p>
+                            <form className="authForm" onSubmit={submitAuth}>
+                                <label>Email address
+                                    <input type="email" autoComplete="email" required maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
+                                </label>
+                                <label>Password
+                                    <input type="password" autoComplete={authMode === "register" ? "new-password" : "current-password"} required minLength={8} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" />
+                                </label>
+                                {authError && <p className="authError" role="alert">{authError}</p>}
+                                <button className="primaryModalButton" type="submit" disabled={authLoading}>
+                                    {authLoading ? "Please wait..." : authMode === "register" ? "Create account" : "Log in"}
+                                </button>
+                            </form>
+                            <p className="authSwitch">
+                                {authMode === "register" ? "Already have an account?" : "New to NovaGPT?"}
+                                <button type="button" onClick={() => {
+                                    setAuthMode((mode) => mode === "register" ? "login" : "register");
+                                    setAuthError("");
+                                }}>{authMode === "register" ? "Log in" : "Create an account"}</button>
+                            </p>
+                            <small className="modalFootnote">Passwords are stored as secure hashes and never displayed in your profile.</small>
                         </section>
                     )}
                 </div>
             )}
-            {!isLoggedIn && <span className="srOnly" aria-live="polite">Signed out</span>}
         </div>
     )
 }

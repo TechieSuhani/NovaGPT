@@ -22,6 +22,11 @@ const ThreadSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    ownerId: {
+        type: String,
+        required: true,
+        index: true
+    },
     title: {
         type: String,
         default: "New Chat"

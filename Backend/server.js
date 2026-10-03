@@ -15,6 +15,7 @@ const frontendDistPath = path.resolve(
 
 app.use(express.json());
 app.use(cors());
+app.set("trust proxy", 1);
 
 app.use("/api", chatRoutes);
 app.use(express.static(frontendDistPath));

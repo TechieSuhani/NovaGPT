@@ -19,19 +19,133 @@
     flex-shrink: 0;
 }
 
-.navbar span {
-    margin: 1rem 2rem;
+.navbar > .modelArea,
+.navbar > .profileArea {
+    margin: 0 1.5rem;
+}
+
+.modelArea {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.brandButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 0.8rem;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+}
+
+.brandButton:hover,
+.brandButton[aria-expanded="true"] {
+    border-color: #3b3b3b;
+    background: #292929;
+}
+
+.brandButton i {
+    color: #aaa;
+    font-size: 0.75rem;
+    transition: transform 150ms ease;
+}
+
+.brandButton[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.modelDropdown {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    z-index: 1000;
+    width: min(340px, calc(100vw - 2rem));
+    padding: 0.5rem;
+    border: 1px solid #404040;
+    border-radius: 1rem;
+    background: #242424;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+}
+
+.modelMenuLabel {
+    margin: 0;
+    padding: 0.7rem 0.75rem 0.5rem;
+    color: #9c9c9c;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+}
+
+.modelOption {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin: 0.15rem 0;
+    padding: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    background: transparent;
+    text-align: left;
+}
+
+.modelOption:hover,
+.modelOption.activeModel {
+    border-color: #41415b;
+    background: #30303a;
+}
+
+.modelOption > span:first-child {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.modelOption strong {
+    font-size: 0.86rem;
+}
+
+.modelOption small {
+    color: #aaa;
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+.modelPrice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 0 0 auto;
+    color: #d5d5ff;
+    font-size: 0.77rem;
+    font-weight: 650;
+}
+
+.modelPrice i {
+    color: #aaa;
+    font-size: 0.68rem;
 }
 
 .userIconDiv {
     width: 36px;
     height: 36px;
     justify-content: center;
-    margin: 1rem 2rem;
+    margin: 0;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: transparent;
+}
+
+.profileArea {
+    position: relative;
+    flex: 0 0 auto;
 }
 
 .userIcon {
@@ -136,27 +250,39 @@ input:focus {
 
 .dropDown {
     position: absolute;
-    top: 4rem;
-    right: 4rem;
-    width: 190px;
-
-    background-color: #323232;
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
+    top: calc(100% + 0.55rem);
+    right: 0;
+    width: 230px;
+    border: 1px solid #404040;
+    background-color: #242424;
+    padding: 0.45rem;
+    border-radius: 0.85rem;
     text-align: left;
     z-index: 1000;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.38);
+}
+
+.profileEmail {
+    overflow: hidden;
+    margin: 0;
+    padding: 0.75rem 0.65rem;
+    border-bottom: 1px solid #404040;
+    color: #aaa;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .dropDownItem {
     display: flex;
     width: 100%;
     font-size: 0.9rem;
-    margin: 0.15rem 0;
+    margin: 0.1rem 0;
     padding: 0.65rem 0.5rem;
     gap: 0.65rem;
     justify-content: flex-start;
     border: 0;
+    border-radius: 0.55rem;
     cursor: pointer;
 }
 
@@ -352,8 +478,15 @@ input:focus {
 
 .loginModal {
     width: min(100%, 420px);
+    position: relative;
     padding: 2rem;
     text-align: center;
+}
+
+.authClose {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 .loginLogo {
@@ -373,6 +506,74 @@ input:focus {
     color: #bdbdbd;
     font-size: 0.9rem;
     line-height: 1.55;
+}
+
+.authForm {
+    display: grid;
+    gap: 0.9rem;
+    text-align: left;
+}
+
+.authForm label {
+    display: grid;
+    gap: 0.4rem;
+    color: #d4d4d4;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.authForm input {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid #4a4a4a;
+    border-radius: 0.7rem;
+    background: #292929;
+    box-shadow: none;
+    color: #f4f4f4;
+    font-size: 0.9rem;
+}
+
+.authForm input:focus {
+    border-color: #9b9bff;
+    outline: 2px solid rgba(155, 155, 255, 0.25);
+}
+
+.authForm .primaryModalButton {
+    margin-top: 0.25rem;
+}
+
+.authForm .primaryModalButton:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.authError {
+    margin: 0;
+    color: #fca5a5;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.authSwitch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 1.1rem 0 0.25rem;
+    color: #bdbdbd;
+    font-size: 0.82rem;
+}
+
+.authSwitch button {
+    margin: 0;
+    padding: 0.2rem;
+    border: 0;
+    color: #c5c5ff;
+    font-size: inherit;
+}
+
+.authSwitch button:hover {
+    text-decoration: underline;
 }
 
 .primaryModalButton {
@@ -427,6 +628,7 @@ input:focus {
 }
 
 .app.theme-light .dropDown,
+.app.theme-light .modelDropdown,
 .app.theme-light .accountModal {
     border-color: #d6d8dc;
     background: #fff;
@@ -436,6 +638,24 @@ input:focus {
 .app.theme-light .modalClose,
 .app.theme-light .planButton {
     background: #eceef1;
+}
+
+.app.theme-light .brandButton:hover,
+.app.theme-light .brandButton[aria-expanded="true"],
+.app.theme-light .modelOption:hover,
+.app.theme-light .modelOption.activeModel {
+    border-color: #d6d8dc;
+    background: #eceef1;
+}
+
+.app.theme-light .modelMenuLabel,
+.app.theme-light .modelOption small,
+.app.theme-light .brandButton i {
+    color: #666;
+}
+
+.app.theme-light .modelPrice {
+    color: #4949ae;
 }
 
 .app.theme-light .settingRow,
@@ -464,10 +684,37 @@ input:focus {
     color: #202124;
 }
 
+.app.theme-light .profileEmail,
+.app.theme-light .settingRow small,
+.app.theme-light .modalFootnote,
+.app.theme-light .pricingIntro,
+.app.theme-light .planDescription,
+.app.theme-light .planPrice span,
+.app.theme-light .authSwitch {
+    color: #555;
+}
+
+.app.theme-light .authForm label {
+    color: #30343a;
+}
+
+.app.theme-light .authForm input {
+    border-color: #c8cbd0;
+    background: #f5f6f7;
+}
+
+.app.theme-light .authSwitch button {
+    color: #4949ae;
+}
+
 @media (max-width: 700px) {
-    .navbar span,
-    .userIconDiv {
-        margin: 1rem;
+    .navbar > .modelArea {
+        margin-left: 0.5rem;
+        margin-right: auto;
+    }
+
+    .navbar > .profileArea {
+        margin-right: 0.75rem;
     }
 
     .chatInput {
